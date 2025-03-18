@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            background-image: url('{{ url_for("static", filename="bgimage.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 { text-align: center; color: #003366; }
+        .btn-predict {
+            width: 100%;
+            font-size: 18px;
+            background-color: #FFCC00;
+            border-color: #FFCC00;
+        }
+        .btn-predict:hover {
+            background-color: #e6b800;
+            border-color: #e6b800;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #e9f5e9;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #2d662d;
+        }
+        .history-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+<img src="{{ url_for('static', filename='KIIT-logo.png') }}" class="logo" alt="KIIT Logo">
+
+<div class="container">
+    <h2>🏡 House Price Prediction</h2>
+    <form method="post">
+        <div class="form-group">
+            <label for="sqft">Square Footage:</label>
+            <input type="number" id="sqft" name="sqft" class="form-control" placeholder="Enter square footage" required>
+        </div>
+        <div class="form-group">
+            <label for="bedrooms">Number of Bedrooms:</label>
+            <input type="number" id="bedrooms" name="bedrooms" class="form-control" placeholder="Enter number of bedrooms" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-predict">Predict Price</button>
+    </form>
+
+    {% if predicted_price is not none %}
+        {% if predicted_price is string and "Error" in predicted_price %}
+            <div class="result-box" style="background-color: #f8d7da; color: #721c24;">{{ predicted_price }}</div>
+        {% else %}
+            <div class="result-box">
+                <strong>Predicted Price: ${{ "%.2f"|format(predicted_price) }}</strong>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if history %}
+    <div class="history-box">
+        <h4>📜 Prediction History</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>SqFt</th>
+                    <th>Bedrooms</th>
+                    <th>Predicted Price ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in history[-5:] %}
+                <tr>
+                    <td>{{ entry.sqft }}</td>
+                    <td>{{ entry.bedrooms }}</td>
+                    <td>${{ "%.2f"|format(entry.price) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

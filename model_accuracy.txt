@@ -1,0 +1,1 @@
+Model Accuracy (R² Score): 0.7423
